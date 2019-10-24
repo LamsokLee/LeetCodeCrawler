@@ -10,7 +10,7 @@ db.once('open', function() {
     // connected
 });
 
-const leetCodeSchema = new Schema({
+const problemSchema = new Schema({
     question_id : Number,
     question__title: String,
     question__title_slug : String,
@@ -21,7 +21,7 @@ const leetCodeSchema = new Schema({
     dislike_count : Number
 });
 
-const LeetCode = mongoose.model('LeetCode', leetCodeSchema);
+const Problem = mongoose.model('Problem', problemSchema);
 
 
-module.exports = LeetCode;
+module.exports = Problem;
