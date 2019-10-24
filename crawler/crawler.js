@@ -2,7 +2,9 @@ const request = require('request-promise');
 const Problem = require('./database');
 const config = require('../config/url');
 const puppeteer = require('puppeteer');
+const schedule = require('node-schedule');
 var browser;
+
 
 const start = async () => {
     try {
@@ -79,4 +81,6 @@ const getLikeAndDislikeCount = async (question_title) => {
     return [likes, dislikes];
 };
 
-start();
+schedule.scheduleJob('0 0 * * *', () => {
+    start();
+});
