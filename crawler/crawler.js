@@ -19,13 +19,17 @@ const start = async () => {
 }
 
 const updateDataBase = async (json) => {
-    for (i = 0; i < json['stat_status_pairs'].length; i++) {
+    for (i = 67; i < json['stat_status_pairs'].length; i++) {
         var problems = json['stat_status_pairs'];
         var stat = problems[i]['stat'];
         var id = stat['question_id'];
-        var like_dislike = await getLikeAndDislikeCount(stat['question__title_slug']);
-        stat['like_count'] = like_dislike[0];
-        stat['dislike_count'] = like_dislike[1];
+        if (!problems[i]['paid_only']) {
+            var like_dislike = await getLikeAndDislikeCount(stat['question__title_slug']);
+            stat['like_count'] = like_dislike[0];
+            stat['dislike_count'] = like_dislike[1];
+        } else {
+            console.log('Problem is paid only: ' + stat['question__title_slug']);
+        }
 
         var options = { upsert: true };
 
