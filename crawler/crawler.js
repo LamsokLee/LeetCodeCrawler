@@ -15,7 +15,7 @@ const start = async() => {
 }
 
 const updateDataBase = async(json) => {
-    for (i = 0; i < 3; i++) {
+    for (i = 0; i < json['stat_status_pairs'].length; i++) {
         problems = json['stat_status_pairs'];
         stat = problems[i]['stat'];
         id = stat['question_id'];
