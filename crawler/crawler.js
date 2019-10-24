@@ -2,13 +2,17 @@ const request = require('request-promise');
 const Problem = require('./database');
 const config = require('../config/url');
 const puppeteer = require('puppeteer');
+var browser;
 
 const start = async() => {
     try {
+        browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
         result = await request(config.problem_list_api);   
         json = JSON.parse(result);
         console.log("Problem list loaded: " + json['stat_status_pairs'].length + " problems");
         await updateDataBase(json);
+        await browser.close();
+
     } catch (e){
         console.log(e);
     }
@@ -16,14 +20,14 @@ const start = async() => {
 
 const updateDataBase = async(json) => {
     for (i = 0; i < json['stat_status_pairs'].length; i++) {
-        problems = json['stat_status_pairs'];
-        stat = problems[i]['stat'];
-        id = stat['question_id'];
+        var problems = json['stat_status_pairs'];
+        var stat = problems[i]['stat'];
+        var id = stat['question_id'];
         var like_dislike = await getLikeAndDislikeCount(stat['question__title_slug']);
         stat['like_count'] = like_dislike[0];
         stat['dislike_count'] = like_dislike[1];
         
-        options = {upsert: true};
+        var options = {upsert: true};
         
         Problem.updateOne({ question_id : stat['question_id']}, {
             question__title : stat['question__title'],
@@ -48,7 +52,6 @@ const getLikeAndDislikeCount = async(question_title) => {
     var dislikes;
     try {
     problem_url = config.problem_base + question_title;
-    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
     const page = await browser.newPage();
     await page.setViewport({
         width: 1920,
@@ -67,7 +70,6 @@ const getLikeAndDislikeCount = async(question_title) => {
     });
     console.log("likes: " + likes + " dislikes: " + dislikes);
 
-    await browser.close();
 
   } catch (error) {
     console.log(error);
