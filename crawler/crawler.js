@@ -19,7 +19,7 @@ const start = async () => {
 }
 
 const updateDataBase = async (json) => {
-    for (i = 67; i < json['stat_status_pairs'].length; i++) {
+    for (i = 0; i < json['stat_status_pairs'].length; i++) {
         var problems = json['stat_status_pairs'];
         var stat = problems[i]['stat'];
         var id = stat['question_id'];
