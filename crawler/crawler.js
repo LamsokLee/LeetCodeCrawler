@@ -39,7 +39,6 @@ const updateDataBase = async(json) => {
             }
         });
         console.log('Question updated: ' + id);
-        global.gc();
     }
 }
 
