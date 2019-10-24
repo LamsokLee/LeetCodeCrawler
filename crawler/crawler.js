@@ -48,7 +48,7 @@ const getLikeAndDislikeCount = async(question_title) => {
     var dislikes;
     try {
     problem_url = config.problem_base + question_title;
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
     const page = await browser.newPage();
     await page.setViewport({
         width: 1920,
