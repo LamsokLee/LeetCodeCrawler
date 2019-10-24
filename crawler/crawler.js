@@ -8,7 +8,9 @@ const start = async() => {
         result = await request(config.problem_list_api);   
         json = JSON.parse(result);
         console.log("Problem list loaded: " + json['stat_status_pairs'].length + " problems");
+        const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
         await updateDataBase(json);
+        await browser.close();
     } catch (e){
         console.log(e);
     }
@@ -48,7 +50,6 @@ const getLikeAndDislikeCount = async(question_title) => {
     var dislikes;
     try {
     problem_url = config.problem_base + question_title;
-    const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
     const page = await browser.newPage();
     await page.setViewport({
         width: 1920,
@@ -66,9 +67,6 @@ const getLikeAndDislikeCount = async(question_title) => {
         return document.querySelectorAll('.btn__r7r7')[1].querySelector('span').innerHTML;
     });
     console.log("likes: " + likes + " dislikes: " + dislikes);
-
-    await browser.close();
-
   } catch (error) {
     console.log(error);
   }
