@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 var logger = require('../app/logging');
 
-router.get('/api/v1/log/', (req, res, next) => {
+router.get('/', (req, res, next) => {
     const options = {
       from: new Date() - (24 * 60 * 60 * 1000),
       until: new Date(),
