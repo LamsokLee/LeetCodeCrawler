@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-const Problem = require('../crawler/database');
+const Problem = require('../app/database');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {

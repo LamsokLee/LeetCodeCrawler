@@ -6,7 +6,7 @@ var logger = require('morgan');
 
 var indexRouter = require('./routes/index');
 
-var crawler  = require('./crawler/crawler');
+var crawler  = require('./app/crawler');
 
 var app = express();
 

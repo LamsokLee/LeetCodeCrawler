@@ -3,6 +3,7 @@ const Problem = require('./database');
 const config = require('../config/url');
 const puppeteer = require('puppeteer');
 const schedule = require('node-schedule');
+const logger = require('./logging');
 var browser;
 
 
@@ -11,12 +12,11 @@ const start = async () => {
         browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
         result = await request(config.problem_list_api);
         json = JSON.parse(result);
-        console.log("Problem list loaded: " + json['stat_status_pairs'].length + " problems");
+        logger.info("Problem list loaded: " + json['stat_status_pairs'].length + " problems");
         await updateDataBase(json);
         await browser.close();
-
     } catch (e) {
-        console.log(e);
+        logger.error(e);
     }
 }
 
@@ -30,7 +30,7 @@ const updateDataBase = async (json) => {
             stat['like_count'] = like_dislike[0];
             stat['dislike_count'] = like_dislike[1];
         } else {
-            console.log('Problem is paid only: ' + stat['question__title_slug']);
+            logger.info('Problem is paid only: ' + stat['question__title_slug']);
         }
 
         var options = { upsert: true };
@@ -42,18 +42,19 @@ const updateDataBase = async (json) => {
             total_submitted: stat['total_submitted'],
             difficulty: problems[i]['difficulty']['level'],
             like_count: stat['like_count'],
-            dislike_count: stat['dislike_count']
+            dislike_count: stat['dislike_count'],
+            last_update : Date.now()
         }, options, (err) => {
             if (err) {
                 console.error(err);
             }
         });
-        console.log('Question updated: ' + id);
+        logger.info('Question updated: ' + id);
     }
 }
 
 const getLikeAndDislikeCount = async (question_title) => {
-    console.log('Opening problem page: ' + question_title);
+    logger.info('Opening problem page: ' + question_title);
     const page = await browser.newPage();
     try {
         problem_url = config.problem_base + question_title;
@@ -72,9 +73,9 @@ const getLikeAndDislikeCount = async (question_title) => {
         var dislikes = await page.evaluate(() => {
             return document.querySelectorAll('.btn__r7r7')[1].querySelector('span').innerHTML;
         });
-        console.log("likes: " + likes + " dislikes: " + dislikes);
+        logger.info("likes: " + likes + " dislikes: " + dislikes);
     } catch (error) {
-        console.log(error);
+        console.error(error);
     } finally {
         page.close();
     }
@@ -82,5 +83,7 @@ const getLikeAndDislikeCount = async (question_title) => {
 };
 
 schedule.scheduleJob('0 5 * * *', () => {
+// schedule.scheduleJob('30 * * * * *', () => {
+    logger.info('Start pulling data');
     start();
 });
