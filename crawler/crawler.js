@@ -81,6 +81,6 @@ const getLikeAndDislikeCount = async (question_title) => {
     return [likes, dislikes];
 };
 
-schedule.scheduleJob('0 0 * * *', () => {
+schedule.scheduleJob('0 5 * * *', () => {
     start();
 });
