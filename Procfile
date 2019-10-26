@@ -1,2 +1,2 @@
-web: npm run start
-api: npm run heroku-client
+web: npm run heroku-client
+api: npm run start
