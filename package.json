@@ -6,7 +6,7 @@
     "start": "node ./bin/www",
     "server": "nodemon",
     "client": "npm start --prefix client",
-    "heroku-client" : "cd client && npm install && npm start",
+    "heroku-postbuild": "cd client && npm install && npm run build",
     "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "dependencies": {
