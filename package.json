@@ -3,9 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
+    "start": "cd client && npm install && npm run start",
     "server": "nodemon",
     "client": "npm start --prefix client",
+    "heroku-postbuild": "node ./bin/www",
     "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "dependencies": {
