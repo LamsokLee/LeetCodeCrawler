@@ -7,6 +7,7 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var problemRouter = require('./routes/problemRouter');
 var loggingRouter = require('./routes/loggingRouter');
+var rankingRouter = require('./routes/ranking');
 
 var crawler  = require('./app/crawler');
 
@@ -25,6 +26,7 @@ app.use(express.static(path.join(__dirname, 'client/build')));
 
 app.use('/api/v1/question', problemRouter);
 app.use('/api/v1/log', loggingRouter);
+app.use('/api/v1/ranking', rankingRouter);
 
 app.use('*', (req, res, next) => {
   res.redirect('/');

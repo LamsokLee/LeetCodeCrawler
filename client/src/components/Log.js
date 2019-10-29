@@ -12,8 +12,7 @@ class Log extends Component {
     }
 
     componentDidMount() {
-        this.interval = setInterval(() => this.getLog(), 1000);
-        
+        this.interval = setInterval(() => this.getLog(), 1000);  
     }
 
     componentWillUnmount() {
