@@ -26,6 +26,10 @@ app.use(express.static(path.join(__dirname, 'client/build')));
 app.use('/api/v1/question', problemRouter);
 app.use('/api/v1/log', loggingRouter);
 
+app.use('*', (req, res, next) => {
+  res.redirect('/');
+});
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
