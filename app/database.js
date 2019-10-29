@@ -18,6 +18,8 @@ const problemSchema = new Schema({
     question__title_slug : String,
     total_acs : Number,
     total_submitted : Number,
+    acceptance_rate : Schema.Types.Decimal128,
+    like_rate: Schema.Types.Decimal128,
     difficulty: Number,
     like_count : Number,
     dislike_count : Number,

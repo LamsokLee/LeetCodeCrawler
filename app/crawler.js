@@ -22,13 +22,18 @@ const start = async () => {
 
 const updateDataBase = async (json) => {
     for (i = 0; i < json['stat_status_pairs'].length; i++) {
-        var problems = json['stat_status_pairs'];
-        var stat = problems[i]['stat'];
-        var id = stat['question_id'];
+        problems = json['stat_status_pairs'];
+        stat = problems[i]['stat'];
+        id = stat['question_id'];
+        total_submission_and_accept = stat['total_submitted'] + stat['total_acs'];
+        stat['acceptance_rate'] = total_submission_and_accept == 0 ? 0 : stat['total_acs'] / total_submission_and_accept;
         if (!problems[i]['paid_only']) {
             var like_dislike = await getLikeAndDislikeCount(stat['question__title_slug']);
             stat['like_count'] = like_dislike[0];
             stat['dislike_count'] = like_dislike[1];
+            total_like_and_unlikes = stat['like_count'] + stat['dislike_count'];
+            stat['like_rate'] = total_like_and_unlikes == 0 ? 0 : stat['like_count'] / total_like_and_unlikes;
+            console.log("Total: " + total_like_and_unlikes);
         } else {
             logger.info('Problem is paid only: ' + stat['question__title_slug']);
         }
@@ -40,9 +45,11 @@ const updateDataBase = async (json) => {
             question__title_slug: stat['question__title_slug'],
             total_acs: stat['total_acs'],
             total_submitted: stat['total_submitted'],
+            acceptance_rate : stat['acceptance_rate'],
             difficulty: problems[i]['difficulty']['level'],
             like_count: stat['like_count'],
             dislike_count: stat['dislike_count'],
+            like_rate: stat['like_rate'],
             last_update : Date.now()
         }, options, (err) => {
             if (err) {
@@ -66,11 +73,11 @@ const getLikeAndDislikeCount = async (question_title) => {
 
         await page.waitForSelector('#initial-loading', { hidden: true });
 
-        var likes = await page.evaluate(() => {
+        likes = await page.evaluate(() => {
             return document.querySelectorAll('.btn__r7r7')[0].querySelector('span').innerHTML;
         });
 
-        var dislikes = await page.evaluate(() => {
+        dislikes = await page.evaluate(() => {
             return document.querySelectorAll('.btn__r7r7')[1].querySelector('span').innerHTML;
         });
         logger.info("likes: " + likes + " dislikes: " + dislikes);
@@ -79,10 +86,15 @@ const getLikeAndDislikeCount = async (question_title) => {
     } finally {
         page.close();
     }
-    return [likes, dislikes];
+    return [parseInt(likes), parseInt(dislikes)];
 };
 
-schedule.scheduleJob('0 5 * * *', () => {
-    logger.info('Start pulling data');
+if (process.env.NODE_ENV == 'production') {
+    schedule.scheduleJob('0 5 * * *', () => {
+        logger.info('Start pulling data');
+        start();
+    });
+} else {
     start();
-});
+}
+
