@@ -11,8 +11,8 @@ class App extends Component {
             <div>
                 <BrowserRouter>
                     <Route path ='/' component = {NavigationBar}/>
-                    <Route path = '/ranking' component = {Ranking}/>
-                    <Route path = '/log' component = {Log}/>
+                    <Route exact path = '/' component = {Ranking}/>
+                    <Route exact path = '/log' component = {Log}/>
                 </BrowserRouter>
             </div>
         )
