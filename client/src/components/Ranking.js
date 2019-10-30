@@ -38,14 +38,30 @@ class Ranking extends Component {
             problemList: [],
             columns : [{
                 dataField : 'question_id',
-                text : 'Question ID',
+                text : 'UID',
+                type : number,
+                filter: textFilter(),
+                hidden : true,
+                headerStyle : (colum, colIndex) => {
+                    return {
+                    };
+                },
+                sort: true
+            },{
+                dataField : 'frontend_id',
+                text : 'ID',
                 type : number,
                 filter: textFilter(),
                 sort: true
             }, {
                 dataField : 'question__title',
-                text : 'Question Name',
+                text : 'Name',
                 filter : textFilter(),
+                headerStyle : (colum, colIndex) => {
+                    return { 
+                        'width': '30%'
+                    };
+                },
                 formatter : (cell, row, rowIndex) => {
                     var url = "https://leetcode.com/problems/" + row['question__title_slug'];
                     return (
@@ -104,7 +120,6 @@ class Ranking extends Component {
         return (
             <Container>
                 <BootstrapTable 
-                    bootstrap4 = 'true' 
                     keyField = 'question_id'
                     data = {this.state.problemList}
                     columns = {this.state.columns}

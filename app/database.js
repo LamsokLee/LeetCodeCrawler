@@ -14,6 +14,7 @@ db.once('open', function() {
 
 const problemSchema = new Schema({
     question_id : Number,
+    frontend_id : Number,
     question__title: String,
     question__title_slug : String,
     total_acs : Number,

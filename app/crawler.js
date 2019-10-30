@@ -16,7 +16,7 @@ const start = async () => {
         await updateDataBase(json);
         await browser.close();
     } catch (e) {
-        logger.error(e);
+        logger.error(e.toString());
     }
 }
 
@@ -41,6 +41,7 @@ const updateDataBase = async (json) => {
         var options = { upsert: true };
 
         Problem.updateOne({ question_id: stat['question_id'] }, {
+            frontend_id : stat['frontend_question_id'],
             question__title: stat['question__title'],
             question__title_slug: stat['question__title_slug'],
             total_acs: stat['total_acs'],
@@ -53,10 +54,10 @@ const updateDataBase = async (json) => {
             last_update : Date.now()
         }, options, (err) => {
             if (err) {
-                console.error(err);
+                logger.error(err.toString());
             }
         });
-        logger.info('Question updated: ' + id);
+        logger.info('Question updated: ' + stat['question__title']);
     }
 }
 
@@ -80,9 +81,8 @@ const getLikeAndDislikeCount = async (question_title) => {
         dislikes = await page.evaluate(() => {
             return document.querySelectorAll('.btn__r7r7')[1].querySelector('span').innerHTML;
         });
-        logger.info("likes: " + likes + " dislikes: " + dislikes);
     } catch (error) {
-        console.error(error);
+        logger.error(error.toString());
     } finally {
         page.close();
     }
@@ -90,11 +90,13 @@ const getLikeAndDislikeCount = async (question_title) => {
 };
 
 if (process.env.NODE_ENV == 'production') {
+    logger.info('Production mode');
     schedule.scheduleJob('0 5 * * *', () => {
         logger.info('Start pulling data');
         start();
     });
 } else {
+    logger.info('Development mode');
     start();
 }
 

@@ -3,5 +3,3 @@ module.exports = {
     problem_base: "https://leetcode.com/problems/",
     mongoURI : process.env.MONGO_URI
 }
-
-
