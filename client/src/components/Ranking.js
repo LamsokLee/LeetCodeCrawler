@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import BootstrapTable from 'react-bootstrap-table-next';
 import paginationFactory from 'react-bootstrap-table2-paginator';
+import filterFactory, { textFilter, numberFilter, Comparator } from 'react-bootstrap-table2-filter';
 import { number } from 'prop-types';
 import Container from 'react-bootstrap/Container';
 
@@ -20,6 +21,14 @@ class ProblemLinkFormatter extends React.Component {
     }
 }
 
+var rateFilter = numberFilter({
+    options: [0.3, 0.5, 0.8],
+    comparators: [Comparator.GT, Comparator.LT],
+    withoutEmptyComparatorOption: true,
+    style: { display: 'inline-grid' },
+    comparatorClassName: 'custom-comparator-class',
+    numberClassName: 'custom-number-class'
+});
 
 class Ranking extends Component {
     constructor(props) {
@@ -31,10 +40,12 @@ class Ranking extends Component {
                 dataField : 'question_id',
                 text : 'Question ID',
                 type : number,
+                filter: textFilter(),
                 sort: true
             }, {
                 dataField : 'question__title',
                 text : 'Question Name',
+                filter : textFilter(),
                 formatter : (cell, row, rowIndex) => {
                     var url = "https://leetcode.com/problems/" + row['question__title_slug'];
                     return (
@@ -92,7 +103,16 @@ class Ranking extends Component {
     render() {
         return (
             <Container>
-                <BootstrapTable bootstrap4 = 'true' keyField = 'question_id' data = {this.state.problemList} columns = {this.state.columns} pagination = { paginationFactory() } defaultSorted = { defaultSorted }/>
+                <BootstrapTable 
+                    bootstrap4 = 'true' 
+                    keyField = 'question_id'
+                    data = {this.state.problemList}
+                    columns = {this.state.columns}
+                    pagination = { paginationFactory() }
+                    filter = { filterFactory() }
+                    defaultSorted = { defaultSorted }
+                    hover
+                />
             </Container>
         )
     }
