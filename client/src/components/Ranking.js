@@ -9,8 +9,17 @@ import Container from 'react-bootstrap/Container';
 
 const defaultSorted = [{
     dataField: 'question_id', 
-    order: 'asc' // desc or asc
+    order: 'asc'
 }];
+
+class ProblemLinkFormatter extends React.Component {
+    render() {
+        return (
+        <a href = {this.props.link}> {this.props.title} </a>
+        );
+    }
+}
+
 
 class Ranking extends Component {
     constructor(props) {
@@ -25,7 +34,13 @@ class Ranking extends Component {
                 sort: true
             }, {
                 dataField : 'question__title',
-                text : 'Question Name'
+                text : 'Question Name',
+                formatter : (cell, row, rowIndex) => {
+                    var url = "https://leetcode.com/problems/" + row['question__title_slug'];
+                    return (
+                        <ProblemLinkFormatter link = {url} title = {cell}> cell </ProblemLinkFormatter>
+                    )
+                }
             }, {
                 dataField : 'total_submitted',
                 text : 'Submission',
