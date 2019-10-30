@@ -2,12 +2,15 @@ import React, { Component } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import BootstrapTable from 'react-bootstrap-table-next';
-
-import Table from 'react-bootstrap/Table'
-import Container from 'react-bootstrap/Container'
-import { Link } from 'react-router-dom';
+import paginationFactory from 'react-bootstrap-table2-paginator';
 import { number } from 'prop-types';
+import Container from 'react-bootstrap/Container';
 
+
+const defaultSorted = [{
+    dataField: 'question_id', 
+    order: 'asc' // desc or asc
+}];
 
 class Ranking extends Component {
     constructor(props) {
@@ -73,46 +76,11 @@ class Ranking extends Component {
 
     render() {
         return (
-            <BootstrapTable bootstrap4 = 'true' keyField = 'question_id' data = {this.state.problemList} columns = {this.state.columns}/>
+            <Container>
+                <BootstrapTable bootstrap4 = 'true' keyField = 'question_id' data = {this.state.problemList} columns = {this.state.columns} pagination = { paginationFactory() } defaultSorted = { defaultSorted }/>
+            </Container>
         )
     }
-    // render() {
-    //     return (
-    //         <Container>
-    //             <Table striped bordered hover>
-    //                 <thead>
-    //                     <tr>
-    //                     <th>Question ID</th>
-    //                     <th>Question Name</th>
-    //                     <th>Submission</th>
-    //                     <th>Accept</th>
-    //                     <th>Acceptance Rate</th>
-    //                     <th>Liked</th>
-    //                     <th>Disliked</th>
-    //                     <th>Liked Rate</th>
-    //                     </tr>
-    //                 </thead>
-    //                 <tbody>
-    //                     {
-    //                         this.state.problemList.map(q => (
-    //                             <tr>
-    //                             <td>{q.question_id}</td>
-    //                             <td>{q.question__title}</td>
-    //                             <td>{q.total_submitted}</td>
-    //                             <td>{q.total_acs}</td>
-    //                             <td>{q.acceptance_rate == null ? 0 : q.acceptance_rate['$numberDecimal']}</td>
-    //                             <td>{q.like_count}</td>
-    //                             <td>{q.dislike_count}</td>
-    //                             <td>{q.like_rate == null ? 0 : q.like_rate['$numberDecimal']}</td>
-    //                             </tr>
-    //                         ))
-    //                     }
-                        
-    //                 </tbody>
-    //             </Table>
-    //         </Container>
-    //     );
-    // }
 }
 
 export default Ranking;
