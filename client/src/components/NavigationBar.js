@@ -11,11 +11,6 @@ class NavigationBar extends Component {
             <Navbar bg="light" expand="lg">
             <Navbar.Brand as={Link} to ="/">LeetCode Crawler</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
-            <Navbar.Collapse id="basic-navbar-nav">
-                <Nav className="mr-auto">
-                    <Nav.Link as={Link} to ="/log">Log</Nav.Link>
-                </Nav>
-            </Navbar.Collapse>
             </Navbar>
         );
     }

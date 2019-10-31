@@ -31,7 +31,6 @@ class Ranking extends Component {
             columns: [{
                 dataField: 'question_id',
                 text: 'UID',
-                style: { width : '50%' },
                 type: number,
                 filter: textFilter(),
                 hidden: true,
@@ -40,19 +39,14 @@ class Ranking extends Component {
                 dataField: 'frontend_id',
                 text: 'ID',
                 type: number,
-                filter: textFilter({
-                    style: {  }
-                }),
+                filter: textFilter(),
                 sort: true
             }, {
                 dataField: 'question__title',
                 text: 'Name',
                 sort: true,
-                filter: textFilter({
-                    placeholder: '',
-                    style: { width : '100%' }
-                }),
-                headerStyle: (colum, colIndex) => {
+                filter: textFilter(),
+                headerStyle: () => {
                     return {
                         'width': '30%'
                     };

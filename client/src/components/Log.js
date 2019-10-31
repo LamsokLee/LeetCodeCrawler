@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
-import Table from 'react-bootstrap/Table'
-import Container from 'react-bootstrap/Container'
+import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
+import BootstrapTable from 'react-bootstrap-table-next';
+import { number } from 'prop-types';
+import filterFactory from 'react-bootstrap-table2-filter';
+import Container from 'react-bootstrap/Container';
+
 
 class Log extends Component {
     constructor(props) {
@@ -8,11 +12,30 @@ class Log extends Component {
 
         this.state = {
             logs: [],
+            columns: [{
+                dataField: 'message',
+                text: 'Message',
+                type: number,
+                headerStyle: () => {
+                    return {
+                        'width': '70%'
+                    };
+                }
+            },{
+                dataField: 'level',
+                text: 'Level',
+                type: number,
+            },{
+                dataField: 'timestamp',
+                text: 'Time',
+                type: number,
+                sort: true
+            }]
         };
     }
 
     componentDidMount() {
-        this.interval = setInterval(() => this.getLog(), 1000);  
+        this.interval = setInterval(() => this.getLog(), 1000);
     }
 
     componentWillUnmount() {
@@ -28,27 +51,18 @@ class Log extends Component {
     render() {
         return (
             <Container>
-                <Table striped bordered hover>
-                    <thead>
-                        <tr>
-                        <th>Message</th>
-                        <th>Level</th>
-                        <th>Time</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {
-                            this.state.logs.map(msg => (
-                                <tr>
-                                <td>{msg.message}</td>
-                                <td>{msg.level}</td>
-                                <td>{msg.timestamp}</td>
-                                </tr>
-                            ))
-                        }
-                        
-                    </tbody>
-                </Table>
+                <BootstrapTable
+                    keyField='timestamp'
+                    data={this.state.logs}
+                    columns={this.state.columns}
+                    bootstrap4='true'
+                    filter={filterFactory()}
+                    noDataIndication="No log"
+                    hover
+                    striped
+                    condensed
+                    bordered={false}   
+                />
             </Container>
         );
     }
