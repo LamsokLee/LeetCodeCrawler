@@ -8,10 +8,11 @@ import { Link } from 'react-router-dom';
 class NavigationBar extends Component {
     render() {
         return (
-            <Navbar bg="light" expand="lg">
-            <Navbar.Brand as={Link} to ="/">LeetCode Crawler</Navbar.Brand>
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
+            <Navbar bg="light">
+                <Navbar.Brand as={Link} to ="/">LeetCode Crawler</Navbar.Brand>
+                <a class="github-button" href="https://github.com/LamsokLee/LeetCodeCrawler" data-icon="octicon-star" data-size="large" aria-label="Star ntkme/github-buttons on GitHub">Star</a>
             </Navbar>
+            
         );
     }
 }

@@ -1,5 +1,5 @@
 const request = require('request-promise');
-const Problem = require('./database');
+const Problem = require('./schemas/Problem');
 const config = require('../config/url');
 const puppeteer = require('puppeteer');
 const schedule = require('node-schedule');
@@ -24,6 +24,7 @@ const updateDataBase = async (json) => {
     for (i = 0; i < json['stat_status_pairs'].length; i++) {
         problems = json['stat_status_pairs'];
         stat = problems[i]['stat'];
+        logger.info('Updating problem: ' + stat['question__title']);
         id = stat['question_id'];
         total_submission_and_accept = stat['total_submitted'] + stat['total_acs'];
         stat['acceptance_rate'] = total_submission_and_accept == 0 ? 0 : stat['total_acs'] / total_submission_and_accept;
@@ -33,12 +34,9 @@ const updateDataBase = async (json) => {
             stat['dislike_count'] = like_dislike[1];
             total_like_and_unlikes = stat['like_count'] + stat['dislike_count'];
             stat['like_rate'] = total_like_and_unlikes == 0 ? 0 : stat['like_count'] / total_like_and_unlikes;
-            console.log("Total: " + total_like_and_unlikes);
         } else {
             logger.info('Problem is paid only: ' + stat['question__title_slug']);
         }
-
-        var options = { upsert: true };
 
         Problem.updateOne({ question_id: stat['question_id'] }, {
             frontend_id : stat['frontend_question_id'],
@@ -52,17 +50,15 @@ const updateDataBase = async (json) => {
             dislike_count: stat['dislike_count'],
             like_rate: stat['like_rate'],
             last_update : Date.now()
-        }, options, (err) => {
+        }, { upsert: true }, (err) => {
             if (err) {
                 logger.error(err.toString());
             }
         });
-        logger.info('Question updated: ' + stat['question__title']);
     }
 }
 
 const getLikeAndDislikeCount = async (question_title) => {
-    logger.info('Opening problem page: ' + question_title);
     const page = await browser.newPage();
     try {
         problem_url = config.problem_base + question_title;
@@ -92,8 +88,9 @@ const getLikeAndDislikeCount = async (question_title) => {
 if (process.env.NODE_ENV == 'production') {
     logger.info('Production mode');
     schedule.scheduleJob('0 5 * * *', () => {
-        logger.info('Start pulling data');
+        logger.info('Start updating database');
         start();
+        logger.info('Finished updating database');
     });
 } else {
     logger.info('Development mode');

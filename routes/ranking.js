@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Problem = require('../app/database');
+const Problem = require('../app/schemas/Problem');
 
 router.get('/', (req, res, next) => {
     const id = req.params.id;
