@@ -29,18 +29,5 @@ router.get('/', (req, res, next) => {
       res.json(results);
     });
   })
-
-  router.get('/lastUpdate', (req, res, next) => {
-    const options = {
-      start: 0,
-      order: 'desc',
-    };
-    logger.query(options, (err, results) => {
-      if (err) {
-        logger.error(err);
-      }
-      
-    });
-  })
   
   module.exports = router;  
