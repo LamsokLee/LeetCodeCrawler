@@ -23,4 +23,4 @@ before_install:
 install:
   - npm i
 script:
-  - npm run test:integration
+  - npm run start
