@@ -39,7 +39,7 @@ $ npm install
 $ npm run start
 ```
 
-#### Server side installation
+#### Client side installation
 
 ```
 $ cd client
