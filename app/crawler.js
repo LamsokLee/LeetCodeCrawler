@@ -1,6 +1,6 @@
 const request = require('request-promise');
 const Problem = require('./schemas/Problem');
-const config = require('../config/url');
+const config = require('../config/keys');
 const puppeteer = require('puppeteer');
 const schedule = require('node-schedule');
 const logger = require('./logging');
