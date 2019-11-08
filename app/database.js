@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const url = require('../config/url');
+const url = require('../config/keys');
 const logger = require('./logging');
 
 mongoose.connect(url.mongoURI, {useNewUrlParser : true, useUnifiedTopology: true});

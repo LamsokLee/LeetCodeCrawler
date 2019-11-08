@@ -1,22 +1,41 @@
 const request = require('request-promise');
 const Problem = require('./schemas/Problem');
-const config = require('../config/url');
+const config = require('../config/keys');
 const puppeteer = require('puppeteer');
 const schedule = require('node-schedule');
 const logger = require('./logging');
+const readLastLines = require('read-last-lines');
+const fs = require("fs")
 var browser;
+
+const timeThresholdCheck = (th) => {
+    var last = new Date(fs.readFileSync('./app/lastUpdateTime','utf8'));
+
+    var diff = parseInt((Date.now() - last.getTime())/1000/24/60/60);
+
+    if(th <= diff){
+        console.log("Exceeded threshold time, updating databse!");
+        return true;
+    }
+    else{
+        return false;
+    }
+
+}
 
 
 const start = async () => {
-    try {
-        browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
-        result = await request(config.problem_list_api);
-        json = JSON.parse(result);
-        logger.info("Problem list loaded: " + json['stat_status_pairs'].length + " problems");
-        await updateDataBase(json);
-        await browser.close();
-    } catch (e) {
-        logger.error(e.toString());
+    if( timeThresholdCheck(1)){
+        try {
+            browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+            result = await request(config.problem_list_api);
+            json = JSON.parse(result);
+            logger.info("Problem list loaded: " + json['stat_status_pairs'].length + " problems");
+            await updateDataBase(json);
+            await browser.close();
+        } catch (e) {
+            logger.error(e.toString());
+        }
     }
 }
 
@@ -56,6 +75,12 @@ const updateDataBase = async (json) => {
             }
         });
     }
+    // save cur time
+    fs.writeFile('./app/lastUpdateTime', Date.now(), 'utf8', (err) => {
+        if (err) throw err;
+        console.log('Last updating time update successfully done');
+    });
+
 }
 
 const getLikeAndDislikeCount = async (question_title) => {

@@ -24,6 +24,7 @@
     "nodemon": "^1.19.4",
     "pug": "^2.0.4",
     "puppeteer": "^2.0.0",
+    "read-last-lines": "^1.7.1",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
     "url-parse": "^1.4.7",
