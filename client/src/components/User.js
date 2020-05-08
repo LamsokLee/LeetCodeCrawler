@@ -23,7 +23,6 @@ class User extends Component {
             columns: [{
                 dataField: 'user_id',
                 text: 'ID',
-                type: number,
                 filter: textFilter(),
                 sort: true
             }, {
@@ -44,6 +43,28 @@ class User extends Component {
                 dataField: 'contest_ranking',
                 text: 'Ranking',
                 type: number,
+                sort: true
+            }, {
+                dataField: 'progress_accepted',
+                text: 'Accepted',
+                sort: true
+            }, {
+                dataField: 'progress_solved',
+                text: 'Solved',
+                sort: true
+            }, {
+                dataField: 'progress_submitted',
+                text: 'Submitted',
+                sort: true
+            }, {
+                dataField: 'location',
+                text: 'Location',
+                filter: textFilter(),
+                sort: true
+            }, {
+                dataField: 'school',
+                text: 'School',
+                filter: textFilter(),
                 sort: true
             }]
         };
