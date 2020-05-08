@@ -4,5 +4,5 @@ module.exports = {
     user_base: "https://leetcode.com",
     leetcode_cn_base: "https://leetcode-cn.com/",
     contest_ranking_base: "https://leetcode.com/contest/globalranking/",
-    mongoURI : 'mongodb://lcuser:melo3166@ds237308.mlab.com:37308/leetcode'
+    mongoURI : process.env.MONGO_URI
 }
