@@ -4,12 +4,15 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+var mongo = require('./app/database');
 var indexRouter = require('./routes/index');
 var problemRouter = require('./routes/problemRouter');
 var loggingRouter = require('./routes/loggingRouter');
+var userRouter = require('./routes/userRouter');
 var rankingRouter = require('./routes/ranking');
 
-var crawler  = require('./app/crawler');
+var QuestionCrawler  = require('./app/crawler/QuestionCrawler');
+var UserCrawler = require('./app/crawler/UserCrawler');
 
 var app = express();
 
@@ -25,6 +28,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'client/build')));
 
 app.use('/api/v1/question', problemRouter);
+app.use('/api/v1/user', userRouter);
 app.use('/api/v1/log', loggingRouter);
 app.use('/api/v1/ranking', rankingRouter);
 

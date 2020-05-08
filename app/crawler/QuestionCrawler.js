@@ -1,11 +1,11 @@
+const Problem = require('../schemas/Problem');
+const config = require('../../config/url');
+const logger = require('../logging');
 const request = require('request-promise');
-const Problem = require('./schemas/Problem');
-const config = require('../config/url');
 const puppeteer = require('puppeteer');
 const schedule = require('node-schedule');
-const logger = require('./logging');
-var browser;
 
+var browser;
 
 const start = async () => {
     try {
@@ -96,4 +96,3 @@ if (process.env.NODE_ENV == 'production') {
     logger.info('Development mode');
     start();
 }
-

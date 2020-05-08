@@ -5,6 +5,7 @@ const NavigationBar = require('./NavigationBar').default;
 const Log = require('./Log').default;
 const Ranking = require('./Ranking').default;
 const Footer = require('./Footer').default;
+const User = require('./User').default;
 
 class App extends Component {
     render() {
@@ -12,6 +13,7 @@ class App extends Component {
             <div>
                 <BrowserRouter>
                     <Route path ='/' component = {NavigationBar}/>
+                    <Route exact path = '/user' component = {User}/>
                     <Route exact path = '/' component = {Ranking}/>
                     <Route exact path = '/log' component = {Log}/>
                     <Route path = '/' component = {Footer}/>
