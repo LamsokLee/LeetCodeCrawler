@@ -5,9 +5,10 @@ const cheerio = require('cheerio');
 const puppeteer = require('puppeteer');
 const schedule = require('node-schedule');
 const requestWithBackOff = require('./ExponentialBackoff');
+var browser;
 
 const getUserList = async () => {
-    var browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+    browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
     var pageNum = 1;
     var user2Rank = {}
     var userList = [];
@@ -44,9 +45,9 @@ const getUserList = async () => {
             logger.error(error.toString());
         } finally {
             page.close();
-            browser.close();
         }
     }
+    browser.close();
 }
 
 const getUserInfoFromLeetcode = async (user_page) => {
