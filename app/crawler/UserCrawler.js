@@ -3,6 +3,7 @@ const config = require('../../config/url');
 const logger = require('../logging');
 const cheerio = require('cheerio');
 const puppeteer = require('puppeteer');
+const schedule = require('node-schedule');
 const requestWithBackOff = require('./ExponentialBackoff');
 
 var browser;
