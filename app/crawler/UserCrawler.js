@@ -18,7 +18,7 @@ const getUserList = async () => {
         try {
             logger.info('Fetching page: ' + pageNum);
 
-            await page.goto(config.contest_ranking_base + pageNum);
+            await page.goto(config.contest_ranking_base + pageNum, {timeout : 120000});
             await page.waitForSelector('.ranking-table');
 
             var content = await page.content();
