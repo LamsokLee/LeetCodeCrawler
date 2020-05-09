@@ -189,6 +189,5 @@ if (process.env.NODE_ENV == 'production') {
     });
 } else {
     logger.info('Development mode');
-    // getUserList();
-    getUserInfoFromLeetcode("https://leetcode.com/YangZhenjian/");
+    getUserList();
 }
