@@ -13,7 +13,7 @@ const requestWithBackOff = async (url, initDelay, maxDelay) => {
             if (ex.statusCode == 429) {
                 curDelay = curDelay * 2;
                 var randomDelay = curDelay * (Math.random() + 1);
-                // logger.error("Error 429 when requesting " + url + " : Backoff " + randomDelay + " ms.")
+                logger.verbose('Error 429 when requesting ' + url + ' : Backoff ' + randomDelay + ' ms.')
                 await sleep(randomDelay);
                 tryNum++;
                 continue;
@@ -22,7 +22,7 @@ const requestWithBackOff = async (url, initDelay, maxDelay) => {
                 throw ex;
             }
         }
-        logger.info("Request resolved in " + tryNum + " tries. URL: " + url);
+        logger.info('Request resolved in ' + tryNum + ' tries. URL: ' + url);
         break;
     }
     return res;

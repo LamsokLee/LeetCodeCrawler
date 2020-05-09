@@ -1,5 +1,6 @@
 const User = require('../schemas/User');
-const config = require('../../config/url');
+const urlConfig = require('../../config/url');
+const config = require('../../config/config');
 const logger = require('../logging');
 const cheerio = require('cheerio');
 const puppeteer = require('puppeteer');
@@ -18,7 +19,7 @@ const getUserList = async () => {
         try {
             logger.info('Fetching page: ' + pageNum);
 
-            await page.goto(config.contest_ranking_base + pageNum, {timeout : 120000});
+            await page.goto(urlConfig.CONTEST_RANKING_BASE + pageNum, { timeout: config.REQUEST_TIMEOUT });
             await page.waitForSelector('.ranking-table');
 
             var content = await page.content();
@@ -27,17 +28,17 @@ const getUserList = async () => {
             var rows = $('.ranking-row');
             logger.info(rows.length + ' users loaded');
             if (rows.length == 0) {
-                logger.info("Finished pulling user names: " + userList.length + 'loaded.');
+                logger.info('Finished pulling user names: ' + userList.length + 'loaded.');
                 break;
             }
             var requestPromises = [];
             rows.each((i, elem) => {
                 rank = $('.ranking', elem).text();
                 user = $('.username', elem).text();
-                user_page = $('a', elem).attr('href');
+                userPage = $('a', elem).attr('href');
                 userList.push(user);
                 user2Rank[user] = rank;
-                requestPromises.push(getUserInfo(user_page));
+                requestPromises.push(getUserInfo(userPage));
             });
             await Promise.all(requestPromises);
             pageNum++;
@@ -50,22 +51,22 @@ const getUserList = async () => {
     browser.close();
 }
 
-const getUserInfoFromLeetcode = async (user_page) => {
-    logger.verbose('Fetching user page: ' + user_page);
+const getUserInfoFromLeetcode = async (userPage) => {
+    logger.verbose('Fetching user page: ' + userPage);
     var content;
     try {
-        content = await requestWithBackOff(user_page, 10000, 1200000);
+        content = await requestWithBackOff(userPage, 10000, config.REQUEST_TIMEOUT);
     } catch (ex) {
-        logger.error("Error loading user page " + user_page);
+        logger.error('Error loading user page ' + userPage + '. ' + ex);
         return;
     }
 
     try {
         const $ = cheerio.load(content);
-        userData = {};
-        str = $('.response-container').attr('ng-init').replace("pc.init", "")
-        json = ("[" + str.substring(1, str.length - 1) + "]").replace(/'/g, '"');
-        arr = JSON.parse(json);
+        var userData = {};
+        var str = $('.response-container').attr('ng-init').replace('pc.init', '')
+        var json = ('[' + str.substring(1, str.length - 1) + ']').replace(/'/g, '"');
+        var arr = JSON.parse(json);
         userData['contest_history'] = []
         if (arr[11]) {
             for (i = 0; i < arr[11].length; i++) {
@@ -80,7 +81,7 @@ const getUserInfoFromLeetcode = async (user_page) => {
             userData[key] = val;
         });
 
-        userData['user_page'] = user_page;
+        userData['user_page'] = userPage;
         userData['user_id'] = $('.username').text().trim();
         userData['real_name'] = $('.realname').text().trim();
         userData['contest_finished'] = $($('.list-group-item').find('.progress-bar-success').get(0)).text().trim();
@@ -89,27 +90,27 @@ const getUserInfoFromLeetcode = async (user_page) => {
         userData['progress_solved'] = $($('.list-group-item').find('.progress-bar-success').get(3)).text().trim().split('/')[0].trim();
         userData['progress_accepted'] = $($('.list-group-item').find('.progress-bar-success').get(4)).text().trim().split('/')[0].trim();
         userData['progress_submitted'] = $($('.list-group-item').find('.progress-bar-success').get(4)).text().trim().split('/')[1].trim();
-        userData['progress_acceptance_rate'] = $($('.list-group-item').find('.progress-bar-info').get(0)).text().trim().replace("%", "");
+        userData['progress_acceptance_rate'] = $($('.list-group-item').find('.progress-bar-info').get(0)).text().trim().replace('%', '');
         userData['contribution_points'] = $($('.list-group-item').find('.progress-bar-success').get(5)).text().trim();
         userData['contribution_problems'] = $($('.list-group-item').find('.progress-bar-success').get(6)).text().trim();
         userData['contribution_test_cases'] = $($('.list-group-item').find('.progress-bar-success').get(7)).text().trim();
     } catch (ex) {
-        logger.error("Error parsing user data " + user_page + " " + ex);
+        logger.error('Error parsing user data ' + userPage + ' ' + ex);
     }
     logger.info('User data loaded: ' + userData['user_id']);
 
     return userData;
 }
 
-const getUserInfoFromLeetcodeCN = async (user_page) => {
+const getUserInfoFromLeetcodeCN = async (userPage) => {
     var page = await browser.newPage();
-    logger.info('Fetching page: ' + user_page);
+    logger.info('Fetching page: ' + userPage);
     try {
-        await page.goto(user_page, {timeout : 120000});
+        await page.goto(userPage, { timeout: config.REQUEST_TIMEOUT });
         await page.waitForSelector('.css-iy4pb-Container');
         var content = await page.content();
     } catch (ex) {
-        logger.error("Error loading user page " + user_page);
+        logger.error('Error loading user page ' + userPage + '. ' + ex);
         return;
     } finally {
         page.close();
@@ -118,22 +119,22 @@ const getUserInfoFromLeetcodeCN = async (user_page) => {
     try {
         const $ = cheerio.load(content);
         var userData = {};
-        userData['user_page'] = user_page;
+        userData['user_page'] = userPage;
         userData['user_id'] = $('.css-xe07el-UserSlug').text().trim()
         userData['real_name'] = $('.css-lx5wgw-UserName').text().trim()
-        userData['location'] = "China";
+        userData['location'] = 'China';
         userData['contest_finished'] = $($('.css-3wuwj3-SectionTitle').get(5)).text().replace(/\D/g, '');
         userData['contest_ranking'] = $($('.css-16qbhuy-RankValue').get(1)).text();
         userData['contest_ranking_china'] = $($('.css-16qbhuy-RankValue').get(0)).text();
         userData['progress_solved'] = $($('.css-1wo8881-ProgressNumber').get(0)).text().split('/')[0];
         userData['progress_accepted'] = $($('.css-1wo8881-ProgressNumber').get(1)).text().split('/')[0];
         userData['progress_submitted'] = $($('.css-1wo8881-ProgressNumber').get(1)).text().split('/')[1];
-        userData['progress_acceptance_rate'] = $($('.css-1wo8881-ProgressNumber').get(2)).text().replace("%", "");
+        userData['progress_acceptance_rate'] = $($('.css-1wo8881-ProgressNumber').get(2)).text().replace('%', '');
     } catch (ex) {
-        logger.error("Error parsing user data " + user_page + " " + ex);
+        logger.error('Error parsing user data ' + userPage + ' ' + ex);
         return;
     }
-    
+
     logger.info('User data loaded: ' + userData['user_id']);
     return userData;
 }
@@ -145,14 +146,14 @@ const updateUserToDatabase = async (userData) => {
 
     User.updateOne({ user_id: userData['user_id'] }, {
         real_name: userData['real_name'],
-        user_page: userData['user_page'],
+        userPage: userData['userPage'],
         location: userData['location'],
         company: userData['company'],
         school: userData['school'],
         contest_finished: userData['contest_finished'],
         contest_rating: userData['contest_rating'],
         contest_ranking: userData['contest_ranking'],
-        contest_ranking_china : userData['contest_ranking_china'],
+        contest_ranking_china: userData['contest_ranking_china'],
         progress_solved: userData['progress_solved'],
         progress_accepted: userData['progress_accepted'],
         progress_submitted: userData['progress_submitted'],
@@ -170,12 +171,12 @@ const updateUserToDatabase = async (userData) => {
     logger.info('User data updated to database: ' + userData['user_id']);
 }
 
-const getUserInfo = async (user_page) => {
+const getUserInfo = async (userPage) => {
     var userData;
-    if (user_page.startsWith(config.leetcode_cn_base)) {
-        userData = await getUserInfoFromLeetcodeCN(user_page);
+    if (userPage.startsWith(urlConfig.LEETCODE_CN_BASE)) {
+        userData = await getUserInfoFromLeetcodeCN(userPage);
     } else {
-        userData = await getUserInfoFromLeetcode(config.user_base + user_page);
+        userData = await getUserInfoFromLeetcode(urlConfig.USER_BASE + userPage);
     }
     await updateUserToDatabase(userData);
 }
