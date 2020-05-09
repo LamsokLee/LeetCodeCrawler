@@ -145,6 +145,7 @@ const updateUserToDatabase = async (userData) => {
 
     User.updateOne({ user_id: userData['user_id'] }, {
         real_name: userData['real_name'],
+        user_page: userData['user_page'],
         location: userData['location'],
         company: userData['company'],
         school: userData['school'],
