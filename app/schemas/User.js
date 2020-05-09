@@ -6,6 +6,7 @@ const userSchema = new Schema({
     user_page : String,
     real_name : String,
     location : String,
+    company : String,
     school : String,
     contest_finished : Number,
     contest_rating : Number,

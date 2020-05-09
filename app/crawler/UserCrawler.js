@@ -73,11 +73,16 @@ const getUserInfoFromLeetcode = async (user_page) => {
             }
         }
 
+        var rows = $('.list-group-item').find('.pull-right');
+        rows.each((i, elem) => {
+            var key = $(elem.previousSibling).text().trim().toLowerCase();
+            var val = $(elem).text().trim();
+            userData[key] = val;
+        });
+
         userData['user_page'] = user_page;
-        userData['user_id'] = $('.username').text().trim();;
+        userData['user_id'] = $('.username').text().trim();
         userData['real_name'] = $('.realname').text().trim();
-        userData['location'] = $($('.list-group-item').find('.pull-right').get(2)).text().trim();
-        userData['school'] = $($('.list-group-item').find('.pull-right').get(3)).text().trim();
         userData['contest_finished'] = $($('.list-group-item').find('.progress-bar-success').get(0)).text().trim();
         userData['contest_rating'] = $($('.list-group-item').find('.progress-bar-success').get(1)).text().trim();
         userData['contest_ranking'] = $($('.list-group-item').find('.progress-bar-success').get(2)).text().trim().split('/')[0].trim();
@@ -141,6 +146,7 @@ const updateUserToDatabase = async (userData) => {
     User.updateOne({ user_id: userData['user_id'] }, {
         real_name: userData['real_name'],
         location: userData['location'],
+        company: userData['company'],
         school: userData['school'],
         contest_finished: userData['contest_finished'],
         contest_rating: userData['contest_rating'],
@@ -182,5 +188,6 @@ if (process.env.NODE_ENV == 'production') {
     });
 } else {
     logger.info('Development mode');
-    getUserList();
+    // getUserList();
+    getUserInfoFromLeetcode("https://leetcode.com/YangZhenjian/");
 }
