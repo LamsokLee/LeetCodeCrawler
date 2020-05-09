@@ -66,6 +66,11 @@ class User extends Component {
                 text: 'School',
                 filter: textFilter(),
                 sort: true
+            },{
+                dataField: 'company',
+                text: 'Company',
+                filter: textFilter(),
+                sort: true
             }]
         };
 
