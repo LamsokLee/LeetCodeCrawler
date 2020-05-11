@@ -103,17 +103,21 @@ const getUserInfoFromLeetcode = async (userPage) => {
 }
 
 const getUserInfoFromLeetcodeCN = async (userPage) => {
-    var page = await browser.newPage();
+    var page;
     logger.info('Fetching page: ' + userPage);
     try {
+        page = await browser.newPage();
         await page.goto(userPage, { timeout: config.REQUEST_TIMEOUT });
         await page.waitForSelector('.css-iy4pb-Container');
         var content = await page.content();
     } catch (ex) {
         logger.error('Error loading user page ' + userPage + '. ' + ex);
-        return;
     } finally {
         page.close();
+    }
+    
+    if (content == null) {
+        return;
     }
 
     try {
@@ -133,7 +137,7 @@ const getUserInfoFromLeetcodeCN = async (userPage) => {
     } catch (ex) {
         logger.error('Error parsing user data ' + userPage + ' ' + ex);
         return;
-    }
+    } 
 
     logger.info('User data loaded: ' + userData['user_id']);
     return userData;
